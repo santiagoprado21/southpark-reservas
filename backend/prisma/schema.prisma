@@ -1,0 +1,272 @@
+// South Park Reservas - Prisma Schema
+// Base de datos para sistema de gestión de reservas de Voley Playa y Mini Golf
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USUARIOS Y AUTENTICACIÓN
+// ============================================
+
+enum Role {
+  ADMIN
+  CLIENTE
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // Hash bcrypt
+  
+  nombre    String
+  apellido  String
+  telefono  String
+  
+  role      Role     @default(CLIENTE)
+  activo    Boolean  @default(true)
+  emailVerificado Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relaciones
+  reservas  Reserva[]
+  
+  @@index([email])
+  @@map("users")
+}
+
+// ============================================
+// CANCHAS Y CONFIGURACIÓN
+// ============================================
+
+enum TipoCancha {
+  VOLEY_PLAYA
+  MINI_GOLF
+}
+
+model Cancha {
+  id          String      @id @default(cuid())
+  nombre      String      // "Cancha 1", "Cancha 2", "Mini Golf - Circuito 1"
+  tipo        TipoCancha
+  descripcion String?
+  
+  capacidadMaxima Int?    // Solo informativo
+  activa      Boolean     @default(true)
+  orden       Int         @default(0) // Para ordenar en el frontend
+  
+  // Horarios de operación
+  diasOperacion String[]  // ["LUNES", "MARTES", etc]
+  horaApertura  String    // "16:00"
+  horaCierre    String    // "00:00" o "22:00"
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relaciones
+  configuraciones ConfiguracionCancha[]
+  reservas        Reserva[]
+  bloqueos        Bloqueo[]
+  
+  @@index([tipo, activa])
+  @@map("canchas")
+}
+
+// Tabla de configuración de precios
+// Permite tener diferentes configuraciones de precios por período
+model ConfiguracionCancha {
+  id        String   @id @default(cuid())
+  canchaId  String
+  
+  // VOLEY PLAYA - Precios por hora
+  precioHora1 Float?   // Precio 1 hora
+  precioHora2 Float?   // Precio 2 horas
+  precioHora3 Float?   // Precio 3 horas
+  
+  // VOLEY PLAYA - Franjas horarias con descuento
+  tieneHappyHour Boolean @default(false)
+  happyHourInicio String? // "16:00"
+  happyHourFin    String? // "20:00"
+  precioHora2HappyHour Float? // $110,000 en vez de $130,000
+  
+  // MINI GOLF - Precios por persona
+  precioPersona1Circuito  Float? // $25,000
+  precioPersona2Circuitos Float? // $45,000
+  
+  // Vigencia
+  activa      Boolean  @default(true)
+  fechaInicio DateTime?
+  fechaFin    DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relaciones
+  cancha      Cancha   @relation(fields: [canchaId], references: [id], onDelete: Cascade)
+  
+  @@index([canchaId, activa])
+  @@map("configuraciones_cancha")
+}
+
+// ============================================
+// RESERVAS
+// ============================================
+
+enum EstadoReserva {
+  PENDIENTE   // Reserva creada, esperando confirmación/pago
+  CONFIRMADA  // Pago recibido, reserva confirmada
+  COMPLETADA  // Servicio ya prestado
+  CANCELADA   // Reserva cancelada
+}
+
+model Reserva {
+  id        String   @id @default(cuid())
+  
+  // Cancha y usuario
+  canchaId  String
+  userId    String?  // Opcional, puede reservar sin cuenta
+  
+  // Fecha y hora
+  fecha         DateTime  // Fecha de la reserva
+  horaInicio    String    // "16:00"
+  horaFin       String    // "18:00"
+  duracionHoras Int       // 1, 2, 3 (solo para voley)
+  
+  // Datos del cliente
+  nombreCliente   String
+  emailCliente    String
+  telefonoCliente String
+  
+  // Detalles de la reserva
+  cantidadPersonas  Int      // Informativo para voley, necesario para mini golf
+  cantidadCircuitos Int?     // 1 o 2 (solo para mini golf)
+  
+  // Precios y pago
+  precioTotal     Float
+  montoSena       Float?    // 30% del total
+  pagoCompletado  Boolean   @default(false)
+  pagoId          String?   // ID de la transacción (cuando implementen pagos)
+  metodoPago      String?   // "EFECTIVO", "TRANSFERENCIA", "MERCADOPAGO", etc
+  
+  // Estado
+  estado      EstadoReserva @default(PENDIENTE)
+  notas       String?
+  canceladaAt DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relaciones
+  cancha      Cancha   @relation(fields: [canchaId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id])
+  pagos       Pago[]
+  
+  @@index([canchaId, fecha, estado])
+  @@index([emailCliente])
+  @@index([telefonoCliente])
+  @@index([estado])
+  @@map("reservas")
+}
+
+// ============================================
+// BLOQUEOS (Mantenimiento, eventos, etc)
+// ============================================
+
+model Bloqueo {
+  id         String   @id @default(cuid())
+  canchaId   String
+  
+  fecha      DateTime
+  horaInicio String   // "16:00"
+  horaFin    String   // "20:00"
+  
+  motivo     String   // "Mantenimiento", "Evento privado", etc
+  activo     Boolean  @default(true)
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Relaciones
+  cancha     Cancha   @relation(fields: [canchaId], references: [id], onDelete: Cascade)
+  
+  @@index([canchaId, fecha, activo])
+  @@map("bloqueos")
+}
+
+// ============================================
+// PAGOS (Para cuando implementen pasarela)
+// ============================================
+
+enum TipoPago {
+  SENA      // 30% adelanto
+  COMPLETO  // 100%
+  DIFERENCIA // 70% restante
+}
+
+enum EstadoPago {
+  PENDIENTE
+  APROBADO
+  RECHAZADO
+  REEMBOLSADO
+}
+
+enum MetodoPago {
+  EFECTIVO
+  TRANSFERENCIA
+  MERCADOPAGO
+  WOMPI
+  PAYU
+  TARJETA
+}
+
+model Pago {
+  id        String   @id @default(cuid())
+  reservaId String
+  
+  monto     Float
+  tipo      TipoPago
+  metodo    MetodoPago
+  estado    EstadoPago @default(PENDIENTE)
+  
+  // Info de la pasarela de pago
+  pagoExternoId String?  // ID de MercadoPago, Wompi, etc
+  datosPago     Json?    // Datos completos del pago (JSON)
+  
+  // Comprobante
+  comprobanteUrl String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relaciones
+  reserva   Reserva  @relation(fields: [reservaId], references: [id], onDelete: Cascade)
+  
+  @@index([reservaId])
+  @@index([estado])
+  @@map("pagos")
+}
+
+// ============================================
+// CONFIGURACIÓN GENERAL
+// ============================================
+
+model ConfiguracionGeneral {
+  id    String @id @default(cuid())
+  clave String @unique // "PORCENTAJE_SENA", "EMAIL_ADMIN", etc
+  valor String
+  tipo  String @default("STRING") // "STRING", "NUMBER", "BOOLEAN", "JSON"
+  
+  descripcion String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("configuracion_general")
+}
+

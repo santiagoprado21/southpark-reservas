@@ -1,16 +1,35 @@
 import { useState } from "react";
-import { Menu, X, Volleyball } from "lucide-react";
+import { Menu, X, Volleyball, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setIsOpen(false);
+    // Si no estamos en la home, ir primero a home
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
     }
+    setIsOpen(false);
+  };
+
+  const goToPage = (path: string) => {
+    navigate(path);
+    setIsOpen(false);
   };
 
   return (
@@ -41,6 +60,13 @@ const Navbar = () => {
               Reservas
             </button>
             <button
+              onClick={() => goToPage("/mis-reservas")}
+              className="text-foreground hover:text-primary transition-colors font-medium flex items-center gap-1"
+            >
+              <Search className="w-4 h-4" />
+              Mis Reservas
+            </button>
+            <button
               onClick={() => scrollToSection("precios")}
               className="text-foreground hover:text-primary transition-colors font-medium"
             >
@@ -51,12 +77,6 @@ const Navbar = () => {
               className="text-foreground hover:text-primary transition-colors font-medium"
             >
               Galería
-            </button>
-            <button
-              onClick={() => scrollToSection("nosotros")}
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              Nosotros
             </button>
             <button
               onClick={() => scrollToSection("contacto")}
@@ -95,6 +115,13 @@ const Navbar = () => {
               Reservas
             </button>
             <button
+              onClick={() => goToPage("/mis-reservas")}
+              className="block w-full text-left px-4 py-2 hover:bg-muted rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Search className="w-4 h-4" />
+              Mis Reservas
+            </button>
+            <button
               onClick={() => scrollToSection("precios")}
               className="block w-full text-left px-4 py-2 hover:bg-muted rounded-lg transition-colors"
             >
@@ -105,12 +132,6 @@ const Navbar = () => {
               className="block w-full text-left px-4 py-2 hover:bg-muted rounded-lg transition-colors"
             >
               Galería
-            </button>
-            <button
-              onClick={() => scrollToSection("nosotros")}
-              className="block w-full text-left px-4 py-2 hover:bg-muted rounded-lg transition-colors"
-            >
-              Nosotros
             </button>
             <button
               onClick={() => scrollToSection("contacto")}
