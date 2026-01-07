@@ -39,13 +39,18 @@ export interface Reserva {
   cancha: Cancha;
 }
 
+export interface CreateReservaResponse {
+  reserva: Reserva;
+  whatsappNumero: string | null;
+}
+
 export const reservasService = {
   /**
    * Crear una nueva reserva
    */
-  async createReserva(data: CreateReservaData): Promise<Reserva> {
+  async createReserva(data: CreateReservaData): Promise<CreateReservaResponse> {
     const response = await api.post('/reservas', data);
-    return response.data.data.reserva;
+    return response.data.data;
   },
 
   /**

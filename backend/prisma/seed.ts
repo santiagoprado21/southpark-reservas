@@ -224,6 +224,16 @@ async function main() {
         descripcion: 'Número de WhatsApp para contacto',
       },
       {
+        clave: 'WHATSAPP_VOLEY',
+        valor: '573177751834',
+        descripcion: 'Número de WhatsApp para notificaciones de Voley Playa',
+      },
+      {
+        clave: 'WHATSAPP_MINIGOLF',
+        valor: '573147814609',
+        descripcion: 'Número de WhatsApp para notificaciones de Mini Golf',
+      },
+      {
         clave: 'NOMBRE_COMPLEJO',
         valor: 'South Park - Voley Playa & Mini Golf',
         descripcion: 'Nombre completo del complejo',

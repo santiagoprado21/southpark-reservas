@@ -6,12 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, Users, Phone, CheckCircle2, Volleyball, Flag } from "lucide-react";
+import { Calendar, Clock, Users, Phone, CheckCircle2, Volleyball, Flag, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { canchasService, Cancha } from "@/services/canchas.service";
 import { reservasService, CreateReservaData } from "@/services/reservas.service";
 import { disponibilidadService } from "@/services/disponibilidad.service";
 import CalendarioHorarios from "@/components/CalendarioHorarios";
+import { generarMensajeReserva, abrirWhatsApp } from "@/utils/whatsapp";
 
 const Reservas = () => {
   const { toast } = useToast();
@@ -24,6 +25,7 @@ const Reservas = () => {
   const [motivoNoDisponible, setMotivoNoDisponible] = useState<string>("");
   const [precioCalculado, setPrecioCalculado] = useState<number | null>(null);
   const [reservaCreada, setReservaCreada] = useState<any>(null);
+  const [whatsappNumero, setWhatsappNumero] = useState<string | null>(null);
   const [tipoActivo, setTipoActivo] = useState<"voley" | "minigolf">("voley");
   
   const [formData, setFormData] = useState({
@@ -125,8 +127,18 @@ const Reservas = () => {
     let precio = 0;
 
     if (cancha.tipo === "VOLEY_PLAYA") {
-      const hora = parseInt(formData.horaInicio.split(":")[0]);
-      const esHappyHour = config.tieneHappyHour && hora >= 16 && hora < 20;
+      // Happy Hour aplica SOLO si toda la reserva está dentro de 16:00-20:00
+      const [horaInicio, minInicio] = formData.horaInicio.split(":").map(Number);
+      const minutosInicio = horaInicio * 60 + (minInicio || 0);
+      const minutosFin = minutosInicio + (formData.duracionHoras * 60);
+      
+      // Happy Hour: 16:00 (960 min) a 20:00 (1200 min)
+      const happyHourInicio = 16 * 60; // 960
+      const happyHourFin = 20 * 60; // 1200
+      
+      const esHappyHour = config.tieneHappyHour && 
+                          minutosInicio >= happyHourInicio && 
+                          minutosFin <= happyHourFin;
 
       if (formData.duracionHoras === 1) precio = config.precioHora1 || 80000;
       else if (formData.duracionHoras === 2) precio = esHappyHour && config.precioHora2HappyHour ? config.precioHora2HappyHour : config.precioHora2 || 130000;
@@ -169,6 +181,33 @@ const Reservas = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validación adicional de horario en frontend
+    const cancha = canchas.find((c) => c.id === formData.canchaId);
+    if (cancha && formData.horaInicio && formData.duracionHoras) {
+      const [horaInicio, minInicio] = formData.horaInicio.split(':').map(Number);
+      const [horaCierre, minCierre] = cancha.horaCierre.split(':').map(Number);
+      
+      let minutosInicio = horaInicio * 60 + minInicio;
+      let minutosCierre = horaCierre * 60 + minCierre;
+      
+      // Si cierre es medianoche (00:00), considerarlo como final del día (1440 minutos)
+      if (minutosCierre === 0) {
+        minutosCierre = 1440;
+      }
+      
+      const minutosFin = minutosInicio + (formData.duracionHoras * 60);
+      
+      if (minutosFin > minutosCierre) {
+        toast({
+          title: "Horario inválido",
+          description: `La reserva excedería el horario de cierre (${cancha.horaCierre}). Por favor selecciona un horario más temprano o reduce la duración.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
     setLoading(true);
 
     try {
@@ -185,8 +224,9 @@ const Reservas = () => {
         notas: formData.notas,
       };
 
-      const reserva = await reservasService.createReserva(data);
-      setReservaCreada(reserva);
+      const response = await reservasService.createReserva(data);
+      setReservaCreada(response.reserva);
+      setWhatsappNumero(response.whatsappNumero);
 
       toast({
         title: "¡Reserva creada exitosamente!",
@@ -234,7 +274,25 @@ const Reservas = () => {
                 <p>Para confirmar tu reserva, debes abonar la seña de ${reservaCreada.montoSena.toLocaleString()}.</p>
                 <p className="mt-2">Contactanos por WhatsApp o acercate al complejo.</p>
               </div>
-              <Button onClick={() => setReservaCreada(null)} className="w-full" variant="outline">
+              
+              {whatsappNumero && (
+                <Button 
+                  onClick={() => {
+                    const mensaje = generarMensajeReserva(reservaCreada);
+                    abrirWhatsApp(whatsappNumero, mensaje);
+                  }}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  size="lg"
+                >
+                  <MessageCircle className="mr-2 h-5 w-5" />
+                  Enviar reserva por WhatsApp
+                </Button>
+              )}
+              
+              <Button onClick={() => {
+                setReservaCreada(null);
+                setWhatsappNumero(null);
+              }} className="w-full" variant="outline">
                 Hacer otra reserva
               </Button>
             </CardContent>

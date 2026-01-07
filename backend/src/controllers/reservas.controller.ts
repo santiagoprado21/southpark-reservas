@@ -31,8 +31,19 @@ function calcularPrecio(
 ): number {
   if (tipo === 'VOLEY_PLAYA') {
     // Verificar si es Happy Hour (4pm-8pm)
-    const hora = parseInt(horaInicio.split(':')[0]);
-    const esHappyHour = config.tieneHappyHour && hora >= 16 && hora < 20;
+    // Happy Hour aplica SOLO si toda la reserva está dentro de 16:00-20:00
+    const horaInicioNum = parseInt(horaInicio.split(':')[0]);
+    const minutoInicioNum = parseInt(horaInicio.split(':')[1] || '0');
+    const minutosInicio = horaInicioNum * 60 + minutoInicioNum;
+    const minutosFin = minutosInicio + (duracionHoras * 60);
+    
+    // Happy Hour: 16:00 (960 min) a 20:00 (1200 min)
+    const happyHourInicio = 16 * 60; // 960
+    const happyHourFin = 20 * 60; // 1200
+    
+    const esHappyHour = config.tieneHappyHour && 
+                        minutosInicio >= happyHourInicio && 
+                        minutosFin <= happyHourFin;
 
     if (duracionHoras === 1) return config.precioHora1 || 80000;
     if (duracionHoras === 2) {
@@ -56,6 +67,35 @@ function calcularPrecio(
   }
 
   return 0;
+}
+
+/**
+ * Validar que la reserva esté dentro del horario de operación
+ */
+function validarHorarioDentroDeOperacion(
+  horaInicio: string,
+  horaFin: string,
+  horaApertura: string,
+  horaCierre: string
+): boolean {
+  const baseDate = '2024-01-01';
+  const inicio = parse(`${baseDate} ${horaInicio}`, 'yyyy-MM-dd HH:mm', new Date());
+  const fin = parse(`${baseDate} ${horaFin}`, 'yyyy-MM-dd HH:mm', new Date());
+  const apertura = parse(`${baseDate} ${horaApertura}`, 'yyyy-MM-dd HH:mm', new Date());
+  let cierre = parse(`${baseDate} ${horaCierre}`, 'yyyy-MM-dd HH:mm', new Date());
+
+  // Si el horario cruza medianoche (ej: 16:00 a 00:00)
+  if (cierre <= apertura) {
+    cierre.setDate(cierre.getDate() + 1);
+  }
+
+  // Si la hora fin cruza medianoche
+  if (fin < inicio) {
+    fin.setDate(fin.getDate() + 1);
+  }
+
+  // Validar que inicio esté después o igual a apertura y fin esté antes o igual a cierre
+  return inicio >= apertura && fin <= cierre;
 }
 
 /**
@@ -190,6 +230,16 @@ export const createReserva = async (req: Request, res: Response) => {
     const duracionMinutos = data.duracionHoras * 60;
     const horaFin = calcularHoraFin(data.horaInicio, duracionMinutos);
 
+    // Validar que la reserva no exceda el horario de cierre
+    const horaCierre = cancha.horaCierre as string;
+    if (!validarHorarioDentroDeOperacion(data.horaInicio, horaFin, cancha.horaApertura as string, horaCierre)) {
+      return errorResponse(
+        res, 
+        `La reserva excede el horario de cierre (${horaCierre}). Por favor selecciona un horario o duración que finalice antes del cierre.`, 
+        400
+      );
+    }
+
     // Validar disponibilidad
     const validacion = await validarDisponibilidad(
       data.canchaId,
@@ -240,9 +290,18 @@ export const createReserva = async (req: Request, res: Response) => {
       },
     });
 
+    // Obtener número de WhatsApp según tipo de cancha
+    const claveWhatsApp = cancha.tipo === 'VOLEY_PLAYA' ? 'WHATSAPP_VOLEY' : 'WHATSAPP_MINIGOLF';
+    const configWhatsApp = await prisma.configuracionGeneral.findUnique({
+      where: { clave: claveWhatsApp },
+    });
+
     return successResponse(
       res,
-      { reserva },
+      { 
+        reserva,
+        whatsappNumero: configWhatsApp?.valor || null,
+      },
       'Reserva creada exitosamente. Proceda con el pago de la seña.',
       201
     );
