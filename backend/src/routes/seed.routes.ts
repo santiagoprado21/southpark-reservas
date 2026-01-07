@@ -43,8 +43,6 @@ router.get('/', async (req: Request, res: Response) => {
         email: 'admin@southpark.com',
         password: hashedPassword,
         nombre: 'Administrador',
-        apellido: 'South Park',
-        telefono: '3001234567',
         role: 'ADMIN',
         servicioAsignado: 'TODOS',
         emailVerificado: true,
@@ -64,6 +62,9 @@ router.get('/', async (req: Request, res: Response) => {
           capacidadMaxima: 12,
           activa: true,
           orden: i,
+          diasOperacion: ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'],
+          horaApertura: '16:00',
+          horaCierre: '00:00',
         },
       });
       canchasVoley.push(cancha);
@@ -82,6 +83,9 @@ router.get('/', async (req: Request, res: Response) => {
           capacidadMaxima: null,
           activa: true,
           orden: i + 10,
+          diasOperacion: ['JUEVES', 'VIERNES', 'SABADO', 'DOMINGO'],
+          horaApertura: '16:00',
+          horaCierre: '22:00',
         },
       });
       canchasMiniGolf.push(cancha);
@@ -94,16 +98,14 @@ router.get('/', async (req: Request, res: Response) => {
       await prisma.configuracionCancha.create({
         data: {
           canchaId: cancha.id,
-          diasOperacion: ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'],
-          horaApertura: '16:00',
-          horaCierre: '00:00',
-          duracionTurno: 60,
           precioHora1: 80000,
           precioHora2: 130000,
           precioHora3: 180000,
-          precioHappyHour2h: 110000,
-          horaInicioHappyHour: '16:00',
-          horaFinHappyHour: '20:00',
+          tieneHappyHour: true,
+          happyHourInicio: '16:00',
+          happyHourFin: '20:00',
+          precioHora2HappyHour: 110000,
+          activa: true,
         },
       });
     }
@@ -115,12 +117,9 @@ router.get('/', async (req: Request, res: Response) => {
       await prisma.configuracionCancha.create({
         data: {
           canchaId: cancha.id,
-          diasOperacion: ['JUEVES', 'VIERNES', 'SABADO', 'DOMINGO'],
-          horaApertura: '16:00',
-          horaCierre: '22:00',
-          duracionTurno: 60,
           precioPersona1Circuito: 25000,
           precioPersona2Circuitos: 45000,
+          activa: true,
         },
       });
     }
