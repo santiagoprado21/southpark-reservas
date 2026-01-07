@@ -257,14 +257,6 @@ const MisReservas = () => {
                               ${reserva.precioTotal.toLocaleString()}
                             </span>
                           </div>
-                          {reserva.montoSena && (
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-muted-foreground">Seña (30%):</span>
-                              <span className="font-semibold">
-                                ${reserva.montoSena.toLocaleString()}
-                              </span>
-                            </div>
-                          )}
                           {reserva.pagoCompletado && (
                             <div className="mt-2 flex items-center gap-2 text-green-600">
                               <CheckCircle2 className="w-4 h-4" />

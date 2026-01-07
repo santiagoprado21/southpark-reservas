@@ -62,6 +62,7 @@ export const reservasService = {
     estado?: string;
     email?: string;
     telefono?: string;
+    tipoServicio?: string;
     page?: number;
     limit?: number;
   }): Promise<{
@@ -82,6 +83,14 @@ export const reservasService = {
    */
   async getReservaById(id: string): Promise<Reserva> {
     const response = await api.get(`/reservas/${id}`);
+    return response.data.data.reserva;
+  },
+
+  /**
+   * Actualizar datos de reserva (solo admin)
+   */
+  async updateReserva(id: string, data: Partial<CreateReservaData>): Promise<Reserva> {
+    const response = await api.put(`/reservas/${id}`, data);
     return response.data.data.reserva;
   },
 

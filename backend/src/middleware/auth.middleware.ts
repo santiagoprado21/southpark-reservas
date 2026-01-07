@@ -49,3 +49,23 @@ export const requireAdmin = (
   next();
 };
 
+/**
+ * Middleware para permitir acceso a ADMIN y EMPLEADO
+ * (staff = personal del club)
+ */
+export const requireStaff = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.user) {
+    return errorResponse(res, 'No autenticado', 401);
+  }
+
+  if (req.user.role !== 'ADMIN' && req.user.role !== 'EMPLEADO') {
+    return errorResponse(res, 'Acceso denegado. Se requieren permisos de staff', 403);
+  }
+
+  next();
+};
+

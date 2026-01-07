@@ -3,11 +3,12 @@ import {
   createReserva,
   getReservas,
   getReservaById,
+  updateReserva,
   updateEstadoReserva,
   cancelarReserva,
   completarPago,
 } from '../controllers/reservas.controller';
-import { authenticate, requireAdmin } from '../middleware/auth.middleware';
+import { authenticate, requireAdmin, requireStaff } from '../middleware/auth.middleware';
 
 const router = Router();
 
@@ -15,8 +16,11 @@ const router = Router();
 router.post('/', createReserva);
 router.get('/:id', getReservaById);
 
-// Rutas protegidas (admin)
-router.get('/', authenticate, requireAdmin, getReservas);
+// Rutas protegidas - Ver reservas (ADMIN + EMPLEADO)
+router.get('/', authenticate, requireStaff, getReservas);
+
+// Rutas protegidas - Modificar reservas (solo ADMIN)
+router.put('/:id', authenticate, requireAdmin, updateReserva);
 router.patch('/:id/estado', authenticate, requireAdmin, updateEstadoReserva);
 router.delete('/:id', authenticate, requireAdmin, cancelarReserva);
 router.post('/:id/pago', authenticate, requireAdmin, completarPago);

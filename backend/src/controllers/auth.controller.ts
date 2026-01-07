@@ -129,6 +129,7 @@ export const login = async (req: Request, res: Response) => {
         apellido: user.apellido,
         telefono: user.telefono,
         role: user.role,
+        servicioAsignado: (user as any).servicioAsignado || null,
       },
       token,
     }, 'Login exitoso');

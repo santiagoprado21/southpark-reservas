@@ -30,6 +30,8 @@ app.get('/', (req, res) => {
       canchas: '/api/canchas',
       disponibilidad: '/api/disponibilidad',
       reservas: '/api/reservas',
+      bloqueos: '/api/bloqueos',
+      usuarios: '/api/usuarios',
     },
   });
 });
@@ -43,11 +45,15 @@ import authRoutes from './routes/auth.routes';
 import canchasRoutes from './routes/canchas.routes';
 import disponibilidadRoutes from './routes/disponibilidad.routes';
 import reservasRoutes from './routes/reservas.routes';
+import bloqueosRoutes from './routes/bloqueos.routes';
+import usuariosRoutes from './routes/usuarios.routes';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/canchas', canchasRoutes);
 app.use('/api/disponibilidad', disponibilidadRoutes);
 app.use('/api/reservas', reservasRoutes);
+app.use('/api/bloqueos', bloqueosRoutes);
+app.use('/api/usuarios', usuariosRoutes);
 
 // ===== MANEJO DE ERRORES =====
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

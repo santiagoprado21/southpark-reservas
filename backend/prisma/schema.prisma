@@ -16,7 +16,14 @@ datasource db {
 
 enum Role {
   ADMIN
+  EMPLEADO
   CLIENTE
+}
+
+enum ServicioAsignado {
+  TODOS       // Solo para ADMIN
+  VOLEY_PLAYA
+  MINI_GOLF
 }
 
 model User {
@@ -25,10 +32,11 @@ model User {
   password  String   // Hash bcrypt
   
   nombre    String
-  apellido  String
-  telefono  String
+  apellido  String?  // Opcional para usuarios admin/empleado
+  telefono  String?  // Opcional para usuarios admin/empleado
   
   role      Role     @default(CLIENTE)
+  servicioAsignado ServicioAsignado? // Solo para ADMIN y EMPLEADO
   activo    Boolean  @default(true)
   emailVerificado Boolean @default(false)
   

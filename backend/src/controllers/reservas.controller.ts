@@ -18,6 +18,19 @@ const createReservaSchema = z.object({
   notas: z.string().optional(),
 });
 
+const updateReservaSchema = z.object({
+  canchaId: z.string().optional(),
+  fecha: z.string().optional(), // YYYY-MM-DD
+  horaInicio: z.string().optional(), // HH:mm
+  duracionHoras: z.number().min(1).max(3).optional(),
+  nombreCliente: z.string().min(2).optional(),
+  emailCliente: z.string().email().optional(),
+  telefonoCliente: z.string().min(8).optional(),
+  cantidadPersonas: z.number().min(1).optional(),
+  cantidadCircuitos: z.number().optional(),
+  notas: z.string().optional(),
+});
+
 /**
  * Calcular precio de una reserva
  */
@@ -326,6 +339,7 @@ export const getReservas = async (req: Request, res: Response) => {
       estado,
       email,
       telefono,
+      tipoServicio, // Nuevo filtro para ADMIN
       page = '1',
       limit = '20',
     } = req.query;
@@ -340,6 +354,48 @@ export const getReservas = async (req: Request, res: Response) => {
     if (estado) where.estado = estado;
     if (email) where.emailCliente = { contains: email as string, mode: 'insensitive' };
     if (telefono) where.telefonoCliente = { contains: telefono as string };
+
+    // Filtrar por servicio asignado si es empleado
+    if (req.user) {
+      try {
+        const usuario: any = await prisma.user.findUnique({
+          where: { id: req.user.userId },
+          select: { role: true, servicioAsignado: true } as any,
+        });
+
+        if (usuario) {
+          let tipoFiltro: string | null = null;
+
+          // Si es EMPLEADO y tiene servicio asignado, filtrar automáticamente
+          if ((usuario.role as string) === 'EMPLEADO' && usuario.servicioAsignado) {
+            if (usuario.servicioAsignado === 'VOLEY_PLAYA') {
+              tipoFiltro = 'VOLEY_PLAYA';
+            } else if (usuario.servicioAsignado === 'MINI_GOLF') {
+              tipoFiltro = 'MINI_GOLF';
+            }
+          }
+          // Si es ADMIN y se proporciona filtro de tipo servicio
+          else if ((usuario.role as string) === 'ADMIN' && tipoServicio && tipoServicio !== 'TODOS') {
+            tipoFiltro = tipoServicio as string;
+          }
+
+          // Aplicar filtro si existe
+          if (tipoFiltro) {
+            const canchasFiltradas = await prisma.cancha.findMany({
+              where: { tipo: tipoFiltro as any },
+              select: { id: true },
+            });
+            
+            if (canchasFiltradas.length > 0) {
+              where.canchaId = { in: canchasFiltradas.map((c) => c.id) };
+            }
+          }
+        }
+      } catch (userError) {
+        console.error('Error al obtener usuario para filtrar:', userError);
+        // Continuar sin filtrar si hay error
+      }
+    }
 
     const [reservas, total] = await Promise.all([
       prisma.reserva.findMany({
@@ -396,6 +452,122 @@ export const getReservaById = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error al obtener reserva:', error);
     return errorResponse(res, 'Error al obtener reserva', 500);
+  }
+};
+
+/**
+ * Actualizar datos de una reserva
+ * PUT /api/reservas/:id
+ */
+export const updateReserva = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const data = updateReservaSchema.parse(req.body);
+
+    // Verificar que la reserva existe
+    const reservaExistente = await prisma.reserva.findUnique({
+      where: { id },
+      include: { cancha: { include: { configuraciones: { where: { activa: true } } } } },
+    });
+
+    if (!reservaExistente) {
+      return errorResponse(res, 'Reserva no encontrada', 404);
+    }
+
+    // Si se está cambiando cancha, fecha, hora o duración, recalcular precio
+    let precioTotal = reservaExistente.precioTotal;
+    let montoSena = reservaExistente.montoSena;
+    let horaFin = reservaExistente.horaFin;
+
+    if (data.canchaId || data.horaInicio || data.duracionHoras || data.cantidadPersonas || data.cantidadCircuitos) {
+      // Obtener cancha (nueva o existente)
+      const canchaId = data.canchaId || reservaExistente.canchaId;
+      const cancha = await prisma.cancha.findUnique({
+        where: { id: canchaId },
+        include: { configuraciones: { where: { activa: true } } },
+      });
+
+      if (!cancha || !cancha.activa || cancha.configuraciones.length === 0) {
+        return errorResponse(res, 'Cancha no disponible', 400);
+      }
+
+      const config = cancha.configuraciones[0];
+      const duracionHoras = data.duracionHoras || reservaExistente.duracionHoras;
+      const horaInicio = data.horaInicio || reservaExistente.horaInicio;
+      const cantidadPersonas = data.cantidadPersonas || reservaExistente.cantidadPersonas;
+      const cantidadCircuitos = data.cantidadCircuitos || reservaExistente.cantidadCircuitos;
+
+      // Calcular nueva hora fin
+      horaFin = calcularHoraFin(horaInicio, duracionHoras * 60);
+
+      // Validar horario de operación
+      if (!validarHorarioDentroDeOperacion(horaInicio, horaFin, cancha.horaApertura as string, cancha.horaCierre as string)) {
+        return errorResponse(
+          res,
+          `La reserva excede el horario de cierre (${cancha.horaCierre}). Por favor selecciona un horario válido.`,
+          400
+        );
+      }
+
+      // Validar disponibilidad (excluyendo la reserva actual)
+      const fechaDate = data.fecha ? new Date(data.fecha + 'T00:00:00') : reservaExistente.fecha;
+      const reservasConflicto = await prisma.reserva.findFirst({
+        where: {
+          id: { not: id }, // Excluir la reserva actual
+          canchaId,
+          fecha: fechaDate,
+          estado: { in: ['PENDIENTE', 'CONFIRMADA'] },
+          OR: [
+            { AND: [{ horaInicio: { lte: horaInicio } }, { horaFin: { gt: horaInicio } }] },
+            { AND: [{ horaInicio: { lt: horaFin } }, { horaFin: { gte: horaFin } }] },
+            { AND: [{ horaInicio: { gte: horaInicio } }, { horaFin: { lte: horaFin } }] },
+          ],
+        },
+      });
+
+      if (reservasConflicto) {
+        return errorResponse(res, 'El horario ya está reservado', 400);
+      }
+
+      // Recalcular precio
+      precioTotal = calcularPrecio(
+        cancha.tipo,
+        duracionHoras,
+        cantidadPersonas,
+        cantidadCircuitos || 1,
+        config,
+        horaInicio
+      );
+
+      montoSena = Math.round((precioTotal * 30) / 100);
+    }
+
+    // Preparar datos para actualizar
+    const updateData: any = {
+      ...data,
+      precioTotal,
+      montoSena,
+      horaFin,
+    };
+
+    if (data.fecha) {
+      updateData.fecha = new Date(data.fecha + 'T00:00:00');
+    }
+
+    // Actualizar reserva
+    const reservaActualizada = await prisma.reserva.update({
+      where: { id },
+      data: updateData,
+      include: { cancha: true },
+    });
+
+    return successResponse(res, { reserva: reservaActualizada }, 'Reserva actualizada exitosamente');
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return errorResponse(res, 'Datos inválidos', 400, error.errors);
+    }
+    console.error('Error al actualizar reserva:', error);
+    return errorResponse(res, 'Error al actualizar reserva', 500);
   }
 };
 

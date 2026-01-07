@@ -9,7 +9,6 @@ interface ReservaData {
   horaFin: string;
   nombreCliente: string;
   precioTotal: number;
-  montoSena: number;
   cantidadPersonas: number;
   cantidadCircuitos?: number;
   duracionHoras: number;
@@ -39,9 +38,6 @@ ${reserva.cancha.tipo === 'MINI_GOLF' ? `🏌️ *Circuitos:* ${reserva.cantidad
 👥 *Personas:* ${reserva.cantidadPersonas}
 
 💰 *Precio Total:* $${reserva.precioTotal.toLocaleString('es-CO')}
-💵 *Seña (30%):* $${reserva.montoSena.toLocaleString('es-CO')}
-
-_Para confirmar tu reserva, por favor abona la seña._
   `.trim();
 
   return mensaje;
@@ -77,5 +73,99 @@ export function abrirWhatsApp(numero: string, mensaje: string): void {
 export function notificarReservaPorWhatsApp(reserva: ReservaData, numero: string): void {
   const mensaje = generarMensajeReserva(reserva);
   abrirWhatsApp(numero, mensaje);
+}
+
+/**
+ * Genera mensaje para el cliente
+ */
+export function generarMensajeCliente(reserva: ReservaData): string {
+  const fecha = new Date(reserva.fecha).toLocaleDateString('es-CO', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const mensaje = `
+¡Hola ${reserva.nombreCliente}! 👋
+
+Tu reserva en *SOUTH PARK* ha sido confirmada:
+
+📌 *${reserva.cancha.nombre}*
+📅 *Fecha:* ${fecha}
+⏰ *Horario:* ${reserva.horaInicio} - ${reserva.horaFin}
+${reserva.cancha.tipo === 'VOLEY_PLAYA' ? `⏱️ *Duración:* ${reserva.duracionHoras} hora(s)` : ''}
+${reserva.cancha.tipo === 'MINI_GOLF' ? `🏌️ *Circuitos:* ${reserva.cantidadCircuitos}` : ''}
+👥 *Personas:* ${reserva.cantidadPersonas}
+
+💰 *Precio Total:* $${reserva.precioTotal.toLocaleString('es-CO')}
+
+📍 *South Park - Voley Playa & Mini Golf*
+🕒 ¡Te esperamos!
+  `.trim();
+
+  return mensaje;
+}
+
+/**
+ * Genera mensaje de confirmación para el cliente
+ */
+export function generarMensajeConfirmacion(reserva: ReservaData): string {
+  const fecha = new Date(reserva.fecha).toLocaleDateString('es-CO', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const mensaje = `
+✅ *¡Reserva Confirmada!*
+
+Hola ${reserva.nombreCliente},
+
+Tu pago ha sido confirmado. Tu reserva está lista:
+
+📌 *${reserva.cancha.nombre}*
+📅 *Fecha:* ${fecha}
+⏰ *Horario:* ${reserva.horaInicio} - ${reserva.horaFin}
+
+🎉 ¡Todo listo! Te esperamos en South Park.
+
+Cualquier consulta, no dudes en contactarnos.
+  `.trim();
+
+  return mensaje;
+}
+
+/**
+ * Envía notificación automática al crear reserva
+ * Abre dos ventanas: una para el negocio y otra para el cliente
+ */
+export function enviarNotificacionesNuevaReserva(
+  reserva: ReservaData,
+  numeroNegocio: string,
+  telefonoCliente: string
+): void {
+  // Mensaje para el negocio
+  const mensajeNegocio = generarMensajeReserva(reserva);
+  
+  // Mensaje para el cliente
+  const mensajeCliente = generarMensajeCliente(reserva);
+  
+  // Abrir WhatsApp del negocio (para notificar al admin)
+  window.open(generarEnlaceWhatsApp(numeroNegocio, mensajeNegocio), '_blank');
+  
+  // Abrir WhatsApp del cliente (después de 1 segundo para no bloquear)
+  setTimeout(() => {
+    window.open(generarEnlaceWhatsApp(telefonoCliente, mensajeCliente), '_blank');
+  }, 1000);
+}
+
+/**
+ * Envía confirmación al cliente
+ */
+export function enviarConfirmacionCliente(reserva: ReservaData, telefonoCliente: string): void {
+  const mensaje = generarMensajeConfirmacion(reserva);
+  abrirWhatsApp(telefonoCliente, mensaje);
 }
 

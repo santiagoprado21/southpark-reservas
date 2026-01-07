@@ -1,91 +1,231 @@
-# South Park Reservas
+# 🏐 South Park Reservas
 
-Sistema de reservas para el complejo deportivo South Park - Voley Playa y Mini Golf.
+Sistema de gestión de reservas para club deportivo con Voley Playa y Mini Golf.
 
-## Descripción
+## 🚀 Características
 
-Aplicación web para gestionar reservas de canchas de voley playa y mini golf en el complejo deportivo South Park. Incluye un frontend moderno construido con React y TypeScript, y un backend con Node.js.
+### Para Clientes
+- 🌐 Reserva online sin necesidad de registro
+- 📅 Consulta de disponibilidad en tiempo real
+- 📱 Consulta de reservas por email/teléfono
+- 💬 Notificaciones automáticas por WhatsApp
+- 💵 Pago directo en el complejo
 
-## Tecnologías
+### Para Administradores
+- 📊 Dashboard con estadísticas en tiempo real
+- 📋 Gestión completa de reservas
+- 🚫 Sistema de bloqueos para mantenimiento
+- 👥 Gestión de usuarios y permisos
+- 📈 Reportes y estadísticas con exportación a PDF
+- 📱 Interfaz totalmente responsive
+
+### Para Empleados
+- 👀 Visualización de reservas (solo lectura)
+- 🎯 Filtrado automático por servicio asignado
+- 📱 Panel optimizado para móvil
+
+## 🛠️ Stack Tecnológico
 
 ### Frontend
-- **Vite** - Build tool y servidor de desarrollo
-- **React** - Biblioteca de UI
-- **TypeScript** - Tipado estático
-- **shadcn-ui** - Componentes de UI
-- **Tailwind CSS** - Framework de estilos
-- **React Router** - Enrutamiento
+- **React** con TypeScript
+- **Vite** - Build tool
+- **Tailwind CSS** - Estilos
+- **shadcn/ui** - Componentes UI
+- **React Router** - Navegación
+- **React Query** - Estado del servidor
+- **Axios** - Cliente HTTP
+- **date-fns** - Manejo de fechas
+- **jsPDF** - Generación de reportes PDF
 
 ### Backend
-- **Node.js** - Runtime de JavaScript
-- **Prisma** - ORM para base de datos
+- **Node.js** con TypeScript
+- **Express** - Framework web
+- **Prisma ORM** - Base de datos
+- **PostgreSQL** (Neon) - Base de datos
 - **JWT** - Autenticación
+- **bcrypt** - Hashing de contraseñas
+- **Zod** - Validación de datos
 
-## Instalación
+## 📋 Requisitos Previos
 
-### Requisitos previos
-- Node.js (recomendado usar [nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
-- npm o bun
+- Node.js 18+ 
+- npm o pnpm
+- Cuenta en Neon (PostgreSQL)
 
-### Pasos
+## ⚙️ Instalación
 
-1. Clonar el repositorio:
-```sh
-git clone <YOUR_GIT_URL>
+### 1. Clonar el repositorio
+
+```bash
+git clone <tu-repo>
 cd SouthParkReservas
 ```
 
-2. Instalar dependencias del frontend:
-```sh
+### 2. Instalar dependencias
+
+**Frontend:**
+```bash
 npm install
 ```
 
-3. Instalar dependencias del backend:
-```sh
+**Backend:**
+```bash
 cd backend
 npm install
 ```
 
-4. Configurar variables de entorno:
-   - Crear archivo `.env` en la carpeta `backend` con las variables necesarias
+### 3. Configurar variables de entorno
 
-5. Iniciar el servidor de desarrollo:
-```sh
-# Desde la raíz del proyecto
-npm run dev
+**Backend** (`backend/.env`):
+```env
+DATABASE_URL="postgresql://..."
+JWT_SECRET="tu-secret-key-seguro"
+JWT_EXPIRES_IN="7d"
+PORT=3000
+FRONTEND_URL="http://localhost:5173"
 ```
 
-## Scripts disponibles
+### 4. Configurar base de datos
 
-- `npm run dev` - Inicia el servidor de desarrollo
-- `npm run build` - Construye la aplicación para producción
-- `npm run preview` - Previsualiza la build de producción
-- `npm run lint` - Ejecuta el linter
+```bash
+cd backend
 
-## Estructura del proyecto
+# Generar cliente de Prisma
+npx prisma generate
+
+# Aplicar migraciones
+npx prisma db push
+
+# Cargar datos iniciales
+npx prisma db seed
+```
+
+### 5. Iniciar servidores
+
+**Backend:**
+```bash
+cd backend
+npm run dev
+# Corre en http://localhost:3000
+```
+
+**Frontend:**
+```bash
+npm run dev
+# Corre en http://localhost:5173
+```
+
+## 👤 Usuarios de Prueba
+
+Después del seed, tendrás estos usuarios:
+
+**Admin:**
+- Email: `admin@southpark.com`
+- Password: `admin123`
+- Acceso completo al sistema
+
+## 📁 Estructura del Proyecto
 
 ```
 SouthParkReservas/
-├── src/              # Código fuente del frontend
-│   ├── components/   # Componentes React
-│   ├── pages/        # Páginas de la aplicación
-│   └── lib/          # Utilidades
-├── backend/          # Código del backend
-│   ├── controllers/  # Controladores
-│   ├── routes/       # Rutas de la API
-│   └── utils/        # Utilidades del backend
-└── public/           # Archivos estáticos
+├── backend/                 # API Backend
+│   ├── prisma/             # Schema y migraciones
+│   ├── src/
+│   │   ├── controllers/    # Lógica de negocio
+│   │   ├── routes/         # Rutas API
+│   │   ├── middleware/     # Auth, validación
+│   │   └── utils/          # Utilidades
+│   └── package.json
+├── src/                     # Frontend React
+│   ├── components/         # Componentes React
+│   │   ├── admin/         # Panel de administración
+│   │   └── ui/            # Componentes UI
+│   ├── pages/             # Páginas principales
+│   │   └── admin/         # Páginas del panel admin
+│   ├── services/          # Servicios API
+│   ├── utils/             # Utilidades
+│   └── lib/               # Configuración
+├── public/                 # Assets estáticos
+└── README.md
 ```
 
-## Desarrollo
+## 🔐 Sistema de Permisos
 
-Para trabajar en el proyecto:
+Ver `PERMISOS.md` para documentación completa del sistema de roles y permisos.
 
-1. Asegúrate de tener todas las dependencias instaladas
-2. Inicia el servidor de desarrollo con `npm run dev`
-3. El frontend estará disponible en `http://localhost:8080`
-4. El backend debe estar configurado y corriendo en su puerto correspondiente
+| Rol | Permisos |
+|-----|----------|
+| **ADMIN** | Acceso completo + gestión de usuarios |
+| **EMPLEADO** | Solo lectura de reservas (filtrado por servicio) |
+| **CLIENTE** | Crear reservas y consultar sus propias reservas |
 
-## Licencia
+## 📱 Funcionalidades Principales
 
-Este proyecto es privado.
+### Reservas
+- Creación de reservas para Voley Playa (por cancha) y Mini Golf (por persona)
+- Sistema de precios diferenciados con Happy Hour
+- Validación de disponibilidad en tiempo real
+- Notificaciones automáticas por WhatsApp
+- Pago directo en el complejo al llegar
+
+### Panel de Administración
+- **Dashboard**: Estadísticas y métricas clave
+- **Reservas Hoy**: Vista rápida del día actual
+- **Todas las Reservas**: Gestión completa con filtros
+- **Bloqueos**: Gestión de mantenimientos y eventos
+- **Reportes**: Exportación a PDF con filtros de fecha
+- **Clientes**: Gestión de clientes
+- **Usuarios**: Gestión de usuarios del sistema (solo ADMIN)
+
+### Precios y Configuración
+
+**Voley Playa:**
+- 1 hora: $80,000
+- 2 horas: $130,000 ($110,000 en Happy Hour 4-8pm)
+- 3 horas: $180,000
+- Horario: Lunes a Sábado, 4pm - 12am
+
+**Mini Golf:**
+- 1 circuito: $25,000 por persona
+- 2 circuitos: $45,000 por persona
+- Horario: Jueves a Domingo, 4pm - 10pm
+
+## 🚀 Despliegue
+
+### Frontend
+Recomendado: **Vercel** o **Netlify**
+
+```bash
+npm run build
+```
+
+### Backend
+Recomendado: **Railway** o **Render**
+
+Variables de entorno necesarias:
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `FRONTEND_URL`
+
+### Base de Datos
+Usando **Neon** (PostgreSQL serverless)
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📝 Licencia
+
+Este proyecto es privado y pertenece a South Park Club.
+
+## 👨‍💻 Desarrollo
+
+Desarrollado para el club deportivo South Park.
+
+---
+
+**¿Necesitas ayuda?** Consulta la documentación adicional en `PERMISOS.md`.

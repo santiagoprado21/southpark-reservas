@@ -58,7 +58,7 @@ async function main() {
   // ===== CANCHAS DE VOLEY PLAYA =====
   console.log('\n🏐 Creando canchas de Voley Playa...');
   
-  const canchasVoley = [];
+  const canchasVoley: any[] = [];
   for (let i = 1; i <= 4; i++) {
     const cancha = await prisma.cancha.create({
       data: {
@@ -95,7 +95,7 @@ async function main() {
   // ===== CIRCUITOS DE MINI GOLF =====
   console.log('\n⛳ Creando circuitos de Mini Golf...');
   
-  const canchasMiniGolf = [];
+  const canchasMiniGolf: any[] = [];
   for (let i = 1; i <= 2; i++) {
     const cancha = await prisma.cancha.create({
       data: {

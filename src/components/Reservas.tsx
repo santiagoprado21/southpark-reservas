@@ -12,7 +12,7 @@ import { canchasService, Cancha } from "@/services/canchas.service";
 import { reservasService, CreateReservaData } from "@/services/reservas.service";
 import { disponibilidadService } from "@/services/disponibilidad.service";
 import CalendarioHorarios from "@/components/CalendarioHorarios";
-import { generarMensajeReserva, abrirWhatsApp } from "@/utils/whatsapp";
+import { generarMensajeReserva, abrirWhatsApp, enviarNotificacionesNuevaReserva } from "@/utils/whatsapp";
 
 const Reservas = () => {
   const { toast } = useToast();
@@ -228,9 +228,18 @@ const Reservas = () => {
       setReservaCreada(response.reserva);
       setWhatsappNumero(response.whatsappNumero);
 
+      // Enviar notificaciones automáticas de WhatsApp
+      if (response.whatsappNumero) {
+        enviarNotificacionesNuevaReserva(
+          response.reserva,
+          response.whatsappNumero,
+          formData.telefonoCliente
+        );
+      }
+
       toast({
         title: "¡Reserva creada exitosamente!",
-        description: `Tu reserva ha sido registrada.`,
+        description: `Tu reserva ha sido registrada. Se abrirán las ventanas de WhatsApp.`,
       });
     } catch (error: any) {
       toast({
@@ -265,14 +274,10 @@ const Reservas = () => {
                 <p className="text-xl font-bold text-primary">
                   <strong>Precio Total:</strong> ${reservaCreada.precioTotal.toLocaleString()}
                 </p>
-                <p className="text-lg">
-                  <strong>Seña (30%):</strong> ${reservaCreada.montoSena.toLocaleString()}
-                </p>
               </div>
-              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-sm">
-                <p className="font-semibold">📌 Importante:</p>
-                <p>Para confirmar tu reserva, debes abonar la seña de ${reservaCreada.montoSena.toLocaleString()}.</p>
-                <p className="mt-2">Contactanos por WhatsApp o acercate al complejo.</p>
+              <div className="bg-green-50 border-l-4 border-green-400 p-4 text-sm">
+                <p className="font-semibold">✅ Reserva Confirmada</p>
+                <p className="mt-2">Te esperamos en South Park. Cualquier consulta, contáctanos por WhatsApp.</p>
               </div>
               
               {whatsappNumero && (
@@ -474,7 +479,6 @@ const Reservas = () => {
                         <div className="bg-primary/10 p-4 rounded-lg">
                           <p className="text-sm text-muted-foreground">Precio Total:</p>
                           <p className="text-3xl font-bold text-primary">${precioCalculado.toLocaleString()}</p>
-                          <p className="text-sm mt-2">Seña (30%): ${Math.round(precioCalculado * 0.3).toLocaleString()}</p>
                         </div>
                       )}
 
@@ -701,7 +705,6 @@ const Reservas = () => {
                         <div className="bg-primary/10 p-4 rounded-lg">
                           <p className="text-sm text-muted-foreground">Precio Total:</p>
                           <p className="text-3xl font-bold text-primary">${precioCalculado.toLocaleString()}</p>
-                          <p className="text-sm mt-2">Seña (30%): ${Math.round(precioCalculado * 0.3).toLocaleString()}</p>
                         </div>
                       )}
 
@@ -791,8 +794,8 @@ const Reservas = () => {
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-green-600 mt-1" />
                 <div>
-                  <p className="font-semibold">Seña del 30%</p>
-                  <p className="text-sm text-muted-foreground">Para confirmar tu reserva</p>
+                  <p className="font-semibold">Pago en el lugar</p>
+                  <p className="text-sm text-muted-foreground">Abona al llegar al complejo</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
