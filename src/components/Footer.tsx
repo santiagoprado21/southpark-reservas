@@ -1,6 +1,10 @@
-import { Volleyball, Instagram, MessageCircle, Mail, MapPin } from "lucide-react";
+import { Instagram, MessageCircle, Mail, MapPin, ShieldCheck } from "lucide-react";
+import Logo from "@/components/Logo";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
+  
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -9,18 +13,15 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-foreground text-background py-12">
+    <footer className="bg-sp-blue text-background py-12">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Logo y descripción */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="bg-primary rounded-full p-2">
-                <Volleyball className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <span className="text-2xl font-bold">South Park</span>
+            <div className="mb-4">
+              <Logo size="md" textColor="text-white" />
             </div>
-            <p className="text-background/80">
+            <p className="text-background/90 leading-relaxed">
               Tu destino para voley playa, mini golf y diversión al aire libre.
             </p>
           </div>
@@ -59,6 +60,15 @@ const Footer = () => {
                   className="text-background/80 hover:text-background transition-colors"
                 >
                   Galería
+                </button>
+              </li>
+              <li className="pt-2 border-t border-background/20 mt-2">
+                <button
+                  onClick={() => navigate("/login")}
+                  className="text-background/80 hover:text-background transition-colors flex items-center gap-2"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  Acceso Staff
                 </button>
               </li>
             </ul>

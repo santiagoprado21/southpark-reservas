@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Lock, Mail, Volleyball, Eye, EyeOff } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { authService } from "@/services/auth.service";
+import Logo from "@/components/Logo";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -55,19 +56,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sp-blue/10 via-background to-sp-yellow/10 p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="bg-primary rounded-full p-3">
-              <Volleyball className="w-8 h-8 text-primary-foreground" />
-            </div>
-            <span className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              South Park
-            </span>
+          <div className="flex justify-center mb-4">
+            <Logo size="lg" />
           </div>
-          <p className="text-muted-foreground">Panel de Administración</p>
+          <p className="text-muted-foreground font-poppins font-medium">Panel de Administración</p>
         </div>
 
         {/* Login Card */}
@@ -126,7 +122,12 @@ const Login = () => {
               </div>
 
               {/* Submit Button */}
-              <Button type="submit" className="w-full" size="lg" disabled={loading}>
+              <Button 
+                type="submit" 
+                className="w-full bg-sp-blue hover:bg-sp-blue/90 font-poppins font-semibold" 
+                size="lg" 
+                disabled={loading}
+              >
                 {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
               </Button>
 

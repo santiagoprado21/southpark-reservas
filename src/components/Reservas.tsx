@@ -76,6 +76,30 @@ const Reservas = () => {
   const cargarHorariosDisponibles = async () => {
     setLoadingHorarios(true);
     setMotivoNoDisponible(""); // Limpiar motivo previo
+    
+    // Para Mini Golf: generar todos los horarios sin validar disponibilidad
+    // Pueden atender hasta 4 reservas simultáneas
+    if (formData.tipoCanchaSeleccionada === "MINI_GOLF") {
+      try {
+        // Generar horarios de 16:00 a 22:00 (cada hora)
+        const horariosMiniGolf = [];
+        for (let hora = 16; hora <= 21; hora++) {
+          horariosMiniGolf.push({
+            hora: `${hora.toString().padStart(2, '0')}:00`,
+            disponible: true,
+          });
+        }
+        setHorariosDisponibles(horariosMiniGolf);
+        setMotivoNoDisponible("");
+      } catch (error) {
+        console.error("Error al generar horarios Mini Golf:", error);
+      } finally {
+        setLoadingHorarios(false);
+      }
+      return;
+    }
+    
+    // Para Voley Playa: consultar disponibilidad real al backend
     try {
       console.log('Cargando horarios para:', formData.canchaId, formData.fecha);
       const data = await disponibilidadService.getDisponibilidad(formData.canchaId, formData.fecha);
@@ -311,10 +335,8 @@ const Reservas = () => {
     <section id="reservas" className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Reservá tu Turno
-            </span>
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
+            Reservá tu Turno
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Sistema de reservas en línea - Elegí tu deporte y horario
@@ -329,7 +351,7 @@ const Reservas = () => {
                 Voley Playa
               </TabsTrigger>
               <TabsTrigger value="minigolf" className="text-lg">
-                <Flag className="w-5 h-5 mr-2" />
+                <Flag className="w-5 h-5 mr-2 text-lg" />
                 Mini Golf
               </TabsTrigger>
             </TabsList>
@@ -340,8 +362,8 @@ const Reservas = () => {
                 {/* Formulario Voley */}
                 <Card className="shadow-lg hover:shadow-xl transition-shadow">
                   <CardHeader>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <Volleyball className="w-6 h-6" />
+                    <CardTitle className="text-2xl flex items-center gap-2 text-foreground">
+                      <Volleyball className="w-6 h-6 text-sp-yellow" />
                       Reserva Voley Playa
                     </CardTitle>
                     <CardDescription>
@@ -484,7 +506,7 @@ const Reservas = () => {
 
                       <Button
                         type="submit"
-                        className="w-full bg-primary hover:bg-primary/90 text-lg py-6"
+                        className="w-full bg-sp-yellow hover:bg-sp-yellow/90 text-secondary-foreground text-lg py-6 font-poppins font-semibold"
                         disabled={loading}
                       >
                         {loading ? "Creando reserva..." : "Reservar Voley"}
@@ -496,65 +518,16 @@ const Reservas = () => {
 
                 {/* Info Voley */}
                 <div className="space-y-4">
-                  <Card className="bg-primary text-primary-foreground">
+                  <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Clock className="w-5 h-5" />
+                        <Clock className="w-5 h-5 text-sp-yellow" />
                         Horarios
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-lg">Lunes a Sábado</p>
                       <p className="text-3xl font-bold">16:00 - 00:00 hs</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="bg-secondary text-secondary-foreground">
-                    <CardHeader>
-                      <CardTitle>💰 Precios</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <div className="flex justify-between">
-                        <span>1 hora</span>
-                        <span className="font-bold">$80.000</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span>2 horas (4-8pm)</span>
-                        <Badge variant="secondary">$110.000 🎉</Badge>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>2 horas (8-12am)</span>
-                        <span className="font-bold">$130.000</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>3 horas</span>
-                        <span className="font-bold">$180.000</span>
-                      </div>
-                      <div className="mt-4 p-3 bg-yellow-100 text-yellow-900 rounded">
-                        <p className="text-sm font-semibold">⭐ Happy Hour</p>
-                        <p className="text-xs">4pm - 8pm: 2 horas solo $110.000</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Users className="w-5 h-5" />
-                        Disponibilidad
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        {canchasVoley.map((cancha) => (
-                          <div key={cancha.id} className="flex items-center justify-between p-2 bg-muted rounded">
-                            <span>{cancha.nombre}</span>
-                            <Badge variant="outline" className="bg-green-100 text-green-800">
-                              Disponible
-                            </Badge>
-                          </div>
-                        ))}
-                      </div>
                     </CardContent>
                   </Card>
                 </div>
@@ -567,8 +540,8 @@ const Reservas = () => {
                 {/* Formulario Mini Golf */}
                 <Card className="shadow-lg hover:shadow-xl transition-shadow">
                   <CardHeader>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <Flag className="w-6 h-6" />
+                    <CardTitle className="text-2xl flex items-center gap-2 text-foreground">
+                      <Flag className="w-6 h-6 text-sp-green" />
                       Reserva Mini Golf
                     </CardTitle>
                     <CardDescription>
@@ -722,60 +695,16 @@ const Reservas = () => {
 
                 {/* Info Mini Golf */}
                 <div className="space-y-4">
-                  <Card className="bg-accent text-accent-foreground">
+                  <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Clock className="w-5 h-5" />
+                        <Clock className="w-5 h-5 text-sp-green" />
                         Horarios
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-lg">Jueves a Domingo</p>
                       <p className="text-3xl font-bold">16:00 - 22:00 hs</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="bg-secondary text-secondary-foreground">
-                    <CardHeader>
-                      <CardTitle>💰 Precios por Persona</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex justify-between items-center">
-                        <span>1 circuito (18 hoyos)</span>
-                        <span className="font-bold text-xl">$25.000</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span>2 circuitos (36 hoyos)</span>
-                        <Badge variant="secondary" className="text-lg">$45.000 🎯</Badge>
-                      </div>
-                      <div className="mt-4 p-3 bg-blue-100 text-blue-900 rounded">
-                        <p className="text-sm font-semibold">ℹ️ Ejemplo</p>
-                        <p className="text-xs">4 personas x 2 circuitos = $180.000</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Flag className="w-5 h-5" />
-                        Circuitos Disponibles
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        {canchasMiniGolf.map((cancha) => (
-                          <div key={cancha.id} className="flex items-center justify-between p-2 bg-muted rounded">
-                            <div>
-                              <p className="font-medium">{cancha.nombre}</p>
-                              <p className="text-sm text-muted-foreground">18 hoyos</p>
-                            </div>
-                            <Badge variant="outline" className="bg-green-100 text-green-800">
-                              Disponible
-                            </Badge>
-                          </div>
-                        ))}
-                      </div>
                     </CardContent>
                   </Card>
                 </div>

@@ -1,16 +1,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, TrendingUp } from "lucide-react";
+import { Check, Volleyball, Flag } from "lucide-react";
 
 const Precios = () => {
   const precios = [
     {
       titulo: "Voley Playa",
       descripcion: "Cancha con arena de primera calidad",
-      precio: "15.000",
+      precio: "80.000",
       periodo: "por hora",
-      color: "bg-primary text-primary-foreground",
-      icon: Star,
+      color: "bg-sp-yellow text-secondary-foreground",
+      icon: Volleyball,
       caracteristicas: [
         "Hasta 12 personas",
         "Arena profesional",
@@ -18,44 +18,54 @@ const Precios = () => {
         "Iluminación nocturna",
         "Vestuarios disponibles",
       ],
+      precios_adicionales: [
+        { duracion: "1 hora", precio: "$80.000" },
+        { duracion: "2 horas (Happy Hour 4-8pm)", precio: "$110.000", destacado: true },
+        { duracion: "2 horas (8-12am)", precio: "$130.000" },
+        { duracion: "3 horas", precio: "$180.000" },
+      ],
     },
     {
       titulo: "Mini Golf",
       descripcion: "18 hoyos temáticos y divertidos",
-      precio: "8.000",
+      precio: "25.000",
       periodo: "por persona",
-      color: "bg-accent text-accent-foreground",
-      icon: TrendingUp,
+      color: "bg-sp-green text-accent-foreground",
+      icon: Flag,
       caracteristicas: [
-        "Recorrido completo",
+        "Recorrido completo de 18 hoyos",
         "Palos y pelotas incluidos",
         "Apto para todas las edades",
         "Diseño tropical",
         "Fotos permitidas",
+      ],
+      precios_adicionales: [
+        { duracion: "1 circuito (18 hoyos)", precio: "$25.000/persona" },
+        { duracion: "2 circuitos (36 hoyos)", precio: "$45.000/persona", destacado: true },
       ],
     },
   ];
 
   const promociones = [
     {
-      dia: "Sábados Especiales",
-      descuento: "¡MEGA OFERTA!",
-      precio: "90.000",
-      descripcion: "Día completo de voley playa",
+      dia: "Happy Hour",
+      descuento: "¡OFERTA!",
+      precio: "110.000",
+      descripcion: "2 horas de Voley - 4pm a 8pm",
       highlight: true,
     },
     {
-      dia: "Combo Familiar",
-      descuento: "20% OFF",
-      precio: "Desde 50.000",
-      descripcion: "Voley + Mini Golf para toda la familia",
+      dia: "Mini Golf Doble",
+      descuento: "AHORRÁ",
+      precio: "45.000",
+      descripcion: "2 circuitos completos por persona",
       highlight: false,
     },
     {
-      dia: "Torneos",
+      dia: "Eventos Privados",
       descuento: "Consultar",
       precio: "Precios especiales",
-      descripcion: "Organizamos tu torneo privado",
+      descripcion: "Torneos, cumpleaños y eventos corporativos",
       highlight: false,
     },
   ];
@@ -64,10 +74,8 @@ const Precios = () => {
     <section id="precios" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-secondary to-destructive bg-clip-text text-transparent">
-              Precios y Promociones
-            </span>
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
+            Precios y Promociones
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Tarifas accesibles para que disfrutes con amigos y familia
@@ -84,7 +92,7 @@ const Precios = () => {
               <div className={`absolute top-0 left-0 right-0 h-2 ${item.color}`} />
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <item.icon className="w-10 h-10 text-primary" />
+                  <item.icon className={`w-10 h-10 ${item.titulo === 'Voley Playa' ? 'text-sp-yellow' : 'text-sp-green'}`} />
                   <Badge className={item.color}>{item.titulo}</Badge>
                 </div>
                 <CardTitle className="text-3xl mt-4">{item.titulo}</CardTitle>
@@ -92,14 +100,33 @@ const Precios = () => {
               </CardHeader>
               <CardContent>
                 <div className="mb-6">
-                  <span className="text-5xl font-bold">${item.precio}</span>
+                  <span className="text-4xl font-bold">Desde ${item.precio}</span>
                   <span className="text-muted-foreground ml-2">{item.periodo}</span>
                 </div>
+                
+                {/* Precios detallados */}
+                <div className="mb-6 space-y-2">
+                  {item.precios_adicionales.map((precioItem, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`flex justify-between items-center p-2 rounded ${
+                        precioItem.destacado ? 'bg-muted border-2 border-current' : ''
+                      }`}
+                    >
+                      <span className="text-sm">{precioItem.duracion}</span>
+                      <span className={`font-bold ${precioItem.destacado ? 'text-lg' : ''}`}>
+                        {precioItem.precio}
+                        {precioItem.destacado && ' ⭐'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
                 <ul className="space-y-3">
                   {item.caracteristicas.map((caracteristica, idx) => (
                     <li key={idx} className="flex items-center gap-2">
                       <Check className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span>{caracteristica}</span>
+                      <span className="text-sm">{caracteristica}</span>
                     </li>
                   ))}
                 </ul>

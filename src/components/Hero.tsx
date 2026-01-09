@@ -24,14 +24,10 @@ const Hero = () => {
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center mt-16 animate-fade-in">
-        <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-          <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-            Jugá, Disfrutá y Viví
-          </span>
+        <h1 className="text-5xl md:text-7xl font-display font-extrabold mb-6 leading-tight text-foreground">
+          Jugá, Disfrutá y Viví
           <br />
-          <span className="text-foreground">
-            la Experiencia South Park
-          </span>
+          la Experiencia South Park
         </h1>
         
         <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
@@ -42,7 +38,7 @@ const Hero = () => {
           <Button
             size="lg"
             onClick={scrollToReservas}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all group"
+            className="bg-sp-yellow text-secondary-foreground hover:bg-sp-yellow/90 text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all group font-poppins font-bold"
           >
             Reservá tu Cancha Hoy
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -51,7 +47,7 @@ const Hero = () => {
             size="lg"
             variant="outline"
             onClick={scrollToReservas}
-            className="text-lg px-8 py-6 border-2 bg-background/80 backdrop-blur-sm hover:bg-background"
+            className="text-lg px-8 py-6 border-2 border-sp-blue bg-background/80 backdrop-blur-sm hover:bg-sp-blue hover:text-white transition-all font-poppins font-semibold"
           >
             Ver Precios
           </Button>
@@ -59,12 +55,12 @@ const Hero = () => {
 
         {/* Floating Elements */}
         <div className="absolute bottom-20 left-10 hidden lg:block animate-float">
-          <div className="bg-secondary text-secondary-foreground px-6 py-3 rounded-full font-bold shadow-lg">
+          <div className="bg-sp-yellow text-secondary-foreground px-6 py-3 rounded-full font-poppins font-bold shadow-xl">
             ¡Voley Playa!
           </div>
         </div>
         <div className="absolute bottom-32 right-10 hidden lg:block animate-float" style={{ animationDelay: "1s" }}>
-          <div className="bg-accent text-accent-foreground px-6 py-3 rounded-full font-bold shadow-lg">
+          <div className="bg-sp-green text-accent-foreground px-6 py-3 rounded-full font-poppins font-bold shadow-xl">
             ¡Mini Golf!
           </div>
         </div>

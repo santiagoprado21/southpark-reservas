@@ -20,6 +20,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import Logo from "@/components/Logo";
 
 interface MenuItem {
   id: string;
@@ -134,9 +135,12 @@ const AdminLayout = () => {
     <div className="flex h-screen bg-gray-50">
       {/* Mobile Header */}
       {isMobile && (
-        <header className="fixed top-0 left-0 right-0 z-40 bg-primary text-white shadow-lg">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-sp-blue text-white shadow-lg">
           <div className="flex items-center justify-between p-4">
-            <h1 className="text-lg font-bold">South Park Admin</h1>
+            <div className="flex items-center gap-2">
+              <Logo size="sm" textColor="text-white" showText={false} />
+              <span className="text-lg font-poppins font-bold">South Park Admin</span>
+            </div>
             <Button
               variant="ghost"
               size="icon"
@@ -151,9 +155,12 @@ const AdminLayout = () => {
 
       {/* Mobile Sidebar (Sheet) */}
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetContent side="left" className="w-64 p-0 bg-gradient-to-b from-primary to-primary/90 text-white border-0">
+        <SheetContent side="left" className="w-64 p-0 bg-gradient-to-b from-sp-blue to-sp-blue/90 text-white border-0">
           <SheetHeader className="p-4 border-b border-white/10">
-            <SheetTitle className="text-white text-left">South Park Admin</SheetTitle>
+            <SheetTitle className="text-white text-left flex items-center gap-2">
+              <Logo size="sm" textColor="text-white" showText={false} />
+              <span className="font-poppins">South Park Admin</span>
+            </SheetTitle>
           </SheetHeader>
           <div className="flex flex-col h-[calc(100%-80px)]">
             <MenuContent />
@@ -163,9 +170,10 @@ const AdminLayout = () => {
 
       {/* Desktop Sidebar */}
       {!isMobile && (
-        <aside className="fixed inset-y-0 left-0 z-50 w-64 flex flex-col bg-gradient-to-b from-primary to-primary/90 text-white">
-          <div className="flex items-center justify-between p-4 border-b border-white/10">
-            <h1 className="text-xl font-bold">South Park Admin</h1>
+        <aside className="fixed inset-y-0 left-0 z-50 w-64 flex flex-col bg-gradient-to-b from-sp-blue to-sp-blue/90 text-white shadow-xl">
+          <div className="flex items-center gap-3 p-4 border-b border-white/10">
+            <Logo size="sm" textColor="text-white" showText={false} />
+            <h1 className="text-xl font-poppins font-bold">South Park Admin</h1>
           </div>
           <MenuContent />
         </aside>

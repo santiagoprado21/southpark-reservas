@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Menu, X, Volleyball, Search } from "lucide-react";
+import { Menu, X, Search, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
+import Logo from "@/components/Logo";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,16 +34,11 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToSection("inicio")}>
-            <div className="bg-primary rounded-full p-2">
-              <Volleyball className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              South Park
-            </span>
+          <div className="cursor-pointer transition-transform hover:scale-105" onClick={() => scrollToSection("inicio")}>
+            <Logo size="sm" />
           </div>
 
           {/* Desktop Menu */}
@@ -84,7 +80,22 @@ const Navbar = () => {
             >
               Contacto
             </button>
-            <Button onClick={() => scrollToSection("reservas")} className="bg-secondary text-secondary-foreground hover:bg-secondary/90">
+            
+            {/* Separador visual */}
+            <div className="h-8 w-px bg-border"></div>
+            
+            <Button 
+              onClick={() => goToPage("/login")}
+              variant="outline" 
+              className="border-sp-blue text-sp-blue hover:bg-sp-blue hover:text-white transition-all font-poppins font-semibold"
+            >
+              <ShieldCheck className="w-4 h-4 mr-2" />
+              Staff
+            </Button>
+            <Button 
+              onClick={() => scrollToSection("reservas")} 
+              className="bg-sp-yellow text-secondary-foreground hover:bg-sp-yellow/90 shadow-md hover:shadow-lg transition-all font-poppins font-semibold"
+            >
               Reservar Ahora
             </Button>
           </div>
@@ -139,9 +150,21 @@ const Navbar = () => {
             >
               Contacto
             </button>
+            
+            {/* Separador */}
+            <div className="border-t border-border my-2"></div>
+            
+            <Button
+              onClick={() => goToPage("/login")}
+              variant="outline"
+              className="w-full border-sp-blue text-sp-blue hover:bg-sp-blue hover:text-white font-poppins font-semibold mb-2"
+            >
+              <ShieldCheck className="w-4 h-4 mr-2" />
+              Acceso Staff
+            </Button>
             <Button
               onClick={() => scrollToSection("reservas")}
-              className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90"
+              className="w-full bg-sp-yellow text-secondary-foreground hover:bg-sp-yellow/90 shadow-md font-poppins font-semibold"
             >
               Reservar Ahora
             </Button>

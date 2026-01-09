@@ -57,11 +57,17 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        "beach-sand": "hsl(var(--beach-sand))",
-        "ocean-blue": "hsl(var(--ocean-blue))",
-        "sun-glow": "hsl(var(--sun-glow))",
-        "grass-green": "hsl(var(--grass-green))",
-        "sport-red": "hsl(var(--sport-red))",
+        // Colores institucionales South Park del logo
+        "sp-blue": "hsl(var(--sp-blue))",
+        "sp-yellow": "hsl(var(--sp-yellow))",
+        "sp-red": "hsl(var(--sp-red))",
+        "sp-green": "hsl(var(--sp-green))",
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        display: ['Poppins', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
