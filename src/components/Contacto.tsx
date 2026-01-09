@@ -18,15 +18,11 @@ const Contacto = () => {
         <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {/* Mapa */}
           <div className="h-[400px] rounded-2xl overflow-hidden shadow-lg">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.016888183341!2d-58.38375908477049!3d-34.60373098045968!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccaccc8b8c7fd%3A0x18c4f6e8f4e7a33f!2sObelisco!5e0!3m2!1ses!2sar!4v1635000000000!5m2!1ses!2sar"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              title="Mapa de ubicación South Park"
-            ></iframe>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1991.520581955105!2d-76.52410396709602!3d3.3399988655800184!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e30a1a441051d8b%3A0x5fba71bc862715a2!2sComplejo%20South%20park!5e0!3m2!1ses-419!2sco!4v1767924364534!5m2!1ses-419!2sco" 
+          width="600" height="450" 
+          style={{ border: 0 }} 
+          allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+          <title>Mapa de ubicación South Park</title>
           </div>
 
           {/* Info de Contacto */}
