@@ -7,7 +7,7 @@ const FloatingButtons = () => {
       <Button
         size="lg"
         className="rounded-full w-14 h-14 shadow-2xl bg-accent hover:bg-accent/90 animate-float"
-        onClick={() => window.open('https://wa.me/5491112345678', '_blank')}
+        onClick={() => window.open('https://wa.me/573177751834', '_blank')}
         aria-label="Contactar por WhatsApp"
       >
         <MessageCircle className="w-6 h-6" />
@@ -17,7 +17,7 @@ const FloatingButtons = () => {
         size="lg"
         className="rounded-full w-14 h-14 shadow-2xl bg-primary hover:bg-primary/90 animate-float"
         style={{ animationDelay: "0.5s" }}
-        onClick={() => window.open('https://instagram.com/southparkvoley', '_blank')}
+        onClick={() => window.open('https://instagram.com/southparkcali', '_blank')}
         aria-label="Visitar Instagram"
       >
         <Instagram className="w-6 h-6" />

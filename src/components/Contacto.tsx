@@ -39,8 +39,8 @@ const Contacto = () => {
                 <div>
                   <h3 className="font-bold text-lg mb-1">Dirección</h3>
                   <p className="text-muted-foreground">
-                    Av. Ejemplo 1234<br />
-                    Buenos Aires, Argentina
+                    Via Panamericana, Pance<br />
+                    Cali, Colombia
                   </p>
                 </div>
               </CardContent>
@@ -54,12 +54,12 @@ const Contacto = () => {
                 <div>
                   <h3 className="font-bold text-lg mb-1">Teléfono</h3>
                   <p className="text-muted-foreground">
-                    +54 9 11 1234-5678
+                    +57 3177751834
                   </p>
                   <Button
                     variant="link"
                     className="px-0 text-accent hover:text-accent/80"
-                    onClick={() => window.open('https://wa.me/5491112345678', '_blank')}
+                    onClick={() => window.open('https://wa.me/573177751834', '_blank')}
                   >
                     Chatear por WhatsApp
                   </Button>
@@ -75,7 +75,7 @@ const Contacto = () => {
                 <div>
                   <h3 className="font-bold text-lg mb-1">Email</h3>
                   <p className="text-muted-foreground">
-                    info@southpark.com.ar
+                    southparkcalisas@gmail.com
                   </p>
                 </div>
               </CardContent>

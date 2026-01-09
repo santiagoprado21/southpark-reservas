@@ -24,10 +24,10 @@ const Hero = () => {
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center mt-16 animate-fade-in">
-        <h1 className="text-5xl md:text-7xl font-display font-extrabold mb-6 leading-tight text-foreground">
-          Jugá, Disfrutá y Viví
+        <h1 className="text-6xl md:text-8xl font-display font-extrabold mb-6 leading-tight text-foreground">
+          Club deportivo
           <br />
-          la Experiencia South Park
+          South Park
         </h1>
         
         <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
@@ -38,18 +38,10 @@ const Hero = () => {
           <Button
             size="lg"
             onClick={scrollToReservas}
-            className="bg-sp-yellow text-secondary-foreground hover:bg-sp-yellow/90 text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all group font-poppins font-bold"
+            className="bg-sp-yellow text-white hover:bg-sp-yellow/90 text-lg px-10 py-8 shadow-xl hover:shadow-2xl transition-all group font-poppins font-bold"
           >
-            Reservá tu Cancha Hoy
+            Reservá Aquí
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={scrollToReservas}
-            className="text-lg px-8 py-6 border-2 border-sp-blue bg-background/80 backdrop-blur-sm hover:bg-sp-blue hover:text-white transition-all font-poppins font-semibold"
-          >
-            Ver Precios
           </Button>
         </div>
 

@@ -66,7 +66,7 @@ const Navbar = () => {
               onClick={() => scrollToSection("precios")}
               className="text-foreground hover:text-primary transition-colors font-medium"
             >
-              Precios
+              Precios y Promociones
             </button>
             <button
               onClick={() => scrollToSection("galeria")}
@@ -136,7 +136,7 @@ const Navbar = () => {
               onClick={() => scrollToSection("precios")}
               className="block w-full text-left px-4 py-2 hover:bg-muted rounded-lg transition-colors"
             >
-              Precios
+              Precios y Promociones
             </button>
             <button
               onClick={() => scrollToSection("galeria")}
