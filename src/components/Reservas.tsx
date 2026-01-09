@@ -347,11 +347,11 @@ const Reservas = () => {
           <Tabs value={tipoActivo} onValueChange={handleTabChange} className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
               <TabsTrigger value="voley" className="text-lg">
-                <Volleyball className="w-5 h-5 mr-2" />
+                <Volleyball className="w-5 h-5 mr-2 text-sp-yellow" />
                 Voley Playa
               </TabsTrigger>
               <TabsTrigger value="minigolf" className="text-lg">
-                <Flag className="w-5 h-5 mr-2 text-lg" />
+                <Flag className="w-5 h-5 mr-2 text-green-600" />
                 Mini Golf
               </TabsTrigger>
             </TabsList>

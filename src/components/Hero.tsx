@@ -46,14 +46,24 @@ const Hero = () => {
         </div>
 
         {/* Floating Elements */}
-        <div className="absolute bottom-20 left-10 hidden lg:block animate-float">
+        <div className="absolute bottom-24 left-12 hidden lg:block animate-float">
           <div className="bg-sp-yellow text-secondary-foreground px-6 py-3 rounded-full font-poppins font-bold shadow-xl">
             ¡Voley Playa!
           </div>
         </div>
-        <div className="absolute bottom-32 right-10 hidden lg:block animate-float" style={{ animationDelay: "1s" }}>
+        <div className="absolute bottom-24 right-12 hidden lg:block animate-float" style={{ animationDelay: "1s" }}>
           <div className="bg-sp-green text-accent-foreground px-6 py-3 rounded-full font-poppins font-bold shadow-xl">
             ¡Mini Golf!
+          </div>
+        </div>
+        <div className="absolute top-32 left-16 hidden lg:block animate-float" style={{ animationDelay: "0.5s" }}>
+          <div className="bg-green-600 text-white px-6 py-3 rounded-full font-poppins font-bold shadow-xl">
+            Canchas Sintéticas
+          </div>
+        </div>
+        <div className="absolute top-32 right-16 hidden lg:block animate-float" style={{ animationDelay: "1.5s" }}>
+          <div className="bg-orange-600 text-white px-6 py-3 rounded-full font-poppins font-bold shadow-xl">
+            Tenis
           </div>
         </div>
       </div>

@@ -46,7 +46,8 @@ const Precios = () => {
     },
   ];
 
-  const promociones = [
+  // Promociones - Descomentar cuando se activen
+  /* const promociones = [
     {
       dia: "Happy Hour",
       descuento: "¡OFERTA!",
@@ -68,14 +69,14 @@ const Precios = () => {
       descripcion: "Torneos, cumpleaños y eventos corporativos",
       highlight: false,
     },
-  ];
+  ]; */
 
   return (
     <section id="precios" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
-            Precios y Promociones
+            Precios
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Tarifas accesibles para que disfrutes con amigos y familia
@@ -135,8 +136,9 @@ const Precios = () => {
           ))}
         </div>
 
-        {/* Promociones */}
-        <div className="max-w-5xl mx-auto">
+        {/* Promociones - OCULTA TEMPORALMENTE */}
+        {/* Descomentar cuando haya promociones especiales */}
+        {/* <div className="max-w-5xl mx-auto">
           <h3 className="text-3xl font-bold text-center mb-8">
             Promociones Especiales
           </h3>
@@ -165,7 +167,7 @@ const Precios = () => {
               </Card>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Nota */}
         <div className="text-center mt-12">

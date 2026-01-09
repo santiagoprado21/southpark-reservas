@@ -50,14 +50,15 @@ const Nosotros = () => {
                 Comenzamos con una cancha de voley playa y la visión de construir un lugar especial para nuestra comunidad.
               </p>
               <p>
-                Con el tiempo, agregamos el mini golf y otras actividades, siempre manteniendo nuestro compromiso con la calidad 
-                y el ambiente familiar que nos caracteriza. Hoy somos el destino preferido para quienes buscan pasar un gran momento 
-                al aire libre.
+                Con el tiempo, crecimos y expandimos nuestras instalaciones. Hoy contamos con canchas de voley playa, mini golf, 
+                canchas sintéticas de fútbol y tenis, siempre manteniendo nuestro compromiso con la calidad y el ambiente familiar 
+                que nos caracteriza. Somos el complejo deportivo más completo de la zona, donde cada miembro de la familia encuentra 
+                su actividad favorita.
               </p>
               <p>
                 Nuestro equipo trabaja cada día para mantener las instalaciones impecables y crear experiencias memorables. 
-                Ya sea que vengas a jugar un partido competitivo o simplemente a disfrutar con amigos, en South Park encontrás 
-                tu lugar.
+                Ya sea que vengas a jugar un partido competitivo de voley, disfrutar una tarde de mini golf, organizar tu picadito 
+                de fútbol o practicar tenis, en South Park encontrás tu lugar.
               </p>
             </div>
           </div>

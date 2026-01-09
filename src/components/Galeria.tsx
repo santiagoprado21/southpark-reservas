@@ -1,29 +1,28 @@
-import gallery1 from "@/assets/gallery-1.jpg";
-import gallery2 from "@/assets/gallery-2.jpg";
-import gallery3 from "@/assets/gallery-3.jpg";
-import gallery4 from "@/assets/gallery-4.jpg";
-
 const Galeria = () => {
   const imagenes = [
     {
-      src: gallery1,
-      alt: "Grupo de amigos jugando voley playa",
-      titulo: "Diversión con Amigos",
+      src: "/img/galeria/mini-1.jpg",
+      alt: "Mini golf en South Park",
+      titulo: "Mini Golf",
+      placeholder: true,
     },
     {
-      src: gallery2,
-      alt: "Mini golf colorido con obstáculos divertidos",
-      titulo: "Mini Golf Temático",
+      src: "/img/galeria/voley-1.jpg", // Cambiar por el nombre real cuando subas la foto
+      alt: "Partido de voley playa",
+      titulo: "Voley Playa",
+      placeholder: true, // Remover esta línea cuando agregues la foto real
     },
     {
-      src: gallery3,
-      alt: "Partido de voley al atardecer",
-      titulo: "Atardeceres Épicos",
+      src: "/img/galeria/sinteticas-1.jpg", // Cambiar por el nombre real cuando subas la foto
+      alt: "Canchas sintéticas",
+      titulo: "Canchas Sintéticas",
+      placeholder: true, // Remover esta línea cuando agregues la foto real
     },
     {
-      src: gallery4,
-      alt: "Vista aérea de cancha de voley",
-      titulo: "Instalaciones de Primera",
+      src: "/img/galeria/tenis-1.jpg", // Cambiar por el nombre real cuando subas la foto
+      alt: "Cancha de tenis",
+      titulo: "Tenis",
+      placeholder: true, // Remover esta línea cuando agregues la foto real
     },
   ];
 
@@ -45,11 +44,26 @@ const Galeria = () => {
               key={index}
               className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
             >
-              <img
-                src={imagen.src}
-                alt={imagen.alt}
-                className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
-              />
+              {imagen.placeholder ? (
+                // Placeholder mientras no haya foto
+                <div className="w-full h-80 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+                  <div className="text-center p-6">
+                    <div className="text-5xl mb-3">
+                      {imagen.titulo === "Voley Playa" && "🏐"}
+                      {imagen.titulo === "Canchas Sintéticas" && "⚽"}
+                      {imagen.titulo === "Tenis" && "🎾"}
+                    </div>
+                    <p className="text-muted-foreground font-semibold">{imagen.titulo}</p>
+                    <p className="text-xs text-muted-foreground mt-2">Próximamente</p>
+                  </div>
+                </div>
+              ) : (
+                <img
+                  src={imagen.src}
+                  alt={imagen.alt}
+                  className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <h3 className="text-2xl font-bold text-foreground mb-2">
